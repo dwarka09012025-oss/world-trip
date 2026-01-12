@@ -15,7 +15,7 @@ const ClientHeader = () => {
           <span className="logo-icon">✈️</span>
           <span className="logo-text">World Trip</span>
         </Link>
-        
+
         <nav className="nav-menu">
           <Link to="/home" className={`nav-link ${isActive('/home') || isActive('/') ? 'active' : ''}`}>
             Home

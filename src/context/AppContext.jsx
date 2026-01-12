@@ -202,8 +202,8 @@ export const AppProvider = ({ children }) => {
     // Admin login requires specific credentials
     if (admin) {
       // Check for admin credentials
-      const adminEmail = 'meet@gmail.com'
-      const adminPassword = '123456'
+      const adminEmail = 'admin@gmail.com'
+      const adminPassword = 'admin123'
       
       if (email.toLowerCase() === adminEmail.toLowerCase() && password === adminPassword) {
         const userData = { email: adminEmail, name: 'Admin' }
