@@ -134,11 +134,11 @@ const MyOrders = () => {
                   </div>
                   <div className="order-detail-item">
                     <span className="detail-label">Price per person:</span>
-                    <span className="detail-value price">₹{order.price}</span>
+                    <span className="detail-value price">${order.price}</span>
                   </div>
                   <div className="order-detail-item">
                     <span className="detail-label">Total Amount:</span>
-                    <span className="detail-value price">₹{order.totalAmount || order.price}</span>
+                    <span className="detail-value price">${order.totalAmount || order.price}</span>
                   </div>
                   <div className="order-detail-item">
                     <span className="detail-label">Contact:</span>

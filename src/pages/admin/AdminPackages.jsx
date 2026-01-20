@@ -175,7 +175,7 @@ const AdminPackages = () => {
                   <td>{pkg.name}</td>
                   <td>{pkg.destination}</td>
                   <td>{pkg.duration}</td>
-                  <td>₹{pkg.price}</td>
+                  <td>${pkg.price}</td>
                   <td>
                     <div className="action-buttons">
                       <button onClick={() => handleEdit(pkg)} className="btn-edit">Edit</button>
@@ -224,7 +224,7 @@ const AdminPackages = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Price (₹)</label>
+                  <label>Price ($)</label>
                   <input
                     type="number"
                     value={formData.price}

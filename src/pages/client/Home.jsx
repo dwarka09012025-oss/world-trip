@@ -90,7 +90,7 @@ const Home = () => {
                   )}
                   <div className="package-footer">
                     <div className="package-price-wrapper">
-                      <span className="package-price">₹{pkg.price}</span>
+                      <span className="package-price">${pkg.price}</span>
                       <span className="price-label">per person</span>
                     </div>
                     <Link to="/packages" className="package-btn">View Details</Link>

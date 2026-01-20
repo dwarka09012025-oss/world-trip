@@ -88,10 +88,10 @@ const AdminOrders = () => {
                   </td>
                   <td>
                     <div className="order-amount">
-                      <strong>₹{order.totalAmount || order.price}</strong>
+                      <strong>${order.totalAmount || order.price}</strong>
                       {order.numberOfTravelers > 1 && (
                         <span className="amount-detail">
-                          (₹{order.price} × {order.numberOfTravelers})
+                          (${order.price} × {order.numberOfTravelers})
                         </span>
                       )}
                     </div>

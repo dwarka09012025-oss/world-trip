@@ -75,14 +75,14 @@ const Packages = () => {
   // Filter packages based on search query
   const filteredPackages = useMemo(() => {
     if (!packages || packages.length === 0) return []
-    
+
     if (!searchQuery.trim()) {
       return packages
     }
 
     // Filter packages based on name, destination, or description
     const query = searchQuery.toLowerCase().trim()
-    return packages.filter(pkg => 
+    return packages.filter(pkg =>
       pkg.name?.toLowerCase().includes(query) ||
       pkg.destination?.toLowerCase().includes(query) ||
       pkg.description?.toLowerCase().includes(query)
@@ -133,7 +133,7 @@ const Packages = () => {
                   </div>
                   <div className="preview-price">
                     <span className="price-label">Package Price:</span>
-                    <span className="price-amount">₹{selectedPackage.price} per person</span>
+                    <span className="price-amount">${selectedPackage.price} per person</span>
                   </div>
                 </div>
               </div>
@@ -166,14 +166,45 @@ const Packages = () => {
                 </div>
 
                 <div className="form-row">
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label>Phone Number <span className="required">*</span></label>
                     <input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="00000 00000"
+                      maxLength={10}
+                    />
+                  </div> */}
+                  <div className="form-group">
+                    <label>Phone Number <span className="required">*</span></label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => {
+                        const rawInput = e.target.value.replace(/\D/g, '');
+
+                        let number = rawInput;
+                        if (number.startsWith('91')) {
+                          number = number.substring(2);
+                        }
+
+                        number = number.slice(0, 10);
+
+                        let formatted = '';
+                        if (number.length > 0) {
+                          formatted = '+91 ' + number.slice(0, 5);
+                          if (number.length > 5) {
+                            formatted += ' ' + number.slice(5);
+                          }
+                        }
+
+                        setFormData({ ...formData, phone: formatted });
+                      }}
+                      required
+                      placeholder="+91 00000 00000"
+                      maxLength={15}
                     />
                   </div>
                   <div className="form-group">
@@ -255,7 +286,7 @@ const Packages = () => {
                 <div className="booking-summary">
                   <div className="summary-row">
                     <span>Package Price (per person):</span>
-                    <span>₹{selectedPackage.price}</span>
+                    <span>${selectedPackage.price}</span>
                   </div>
                   <div className="summary-row">
                     <span>Number of Travelers:</span>
@@ -263,7 +294,7 @@ const Packages = () => {
                   </div>
                   <div className="summary-row total">
                     <span>Total Amount:</span>
-                    <span>₹{calculateTotal()}</span>
+                    <span>${calculateTotal()}</span>
                   </div>
                 </div>
 
@@ -329,8 +360,8 @@ const Packages = () => {
           </div>
           {searchQuery && filteredPackages.length > 0 && (
             <div className="search-results-info-wrapper">
-              <button 
-                className="search-results-info clickable" 
+              <button
+                className="search-results-info clickable"
                 onClick={scrollToResults}
                 title="Click to view search results"
               >
@@ -351,40 +382,40 @@ const Packages = () => {
         ) : (
           <div className="packages-grid">
             {filteredPackages.map(pkg => (
-            <div key={pkg.id} className={`package-card ${searchQuery ? 'search-result-card' : ''}`}>
-              <div className="package-image-container">
-                <div className="package-image" style={{ backgroundImage: `url(${pkg.image})` }}>
-                  <div className="package-overlay"></div>
-                  {searchQuery && <div className="package-badge search-badge">Match</div>}
+              <div key={pkg.id} className={`package-card ${searchQuery ? 'search-result-card' : ''}`}>
+                <div className="package-image-container">
+                  <div className="package-image" style={{ backgroundImage: `url(${pkg.image})` }}>
+                    <div className="package-overlay"></div>
+                    {searchQuery && <div className="package-badge search-badge">Match</div>}
+                  </div>
+                  <div className="package-price-display">
+                    <span className="price-currency">$</span>
+                    <span className="price-value">{pkg.price}</span>
+                    <span className="price-unit">/person</span>
+                  </div>
                 </div>
-                <div className="package-price-display">
-                  <span className="price-currency">₹</span>
-                  <span className="price-value">{pkg.price}</span>
-                  <span className="price-unit">/person</span>
+                <div className="package-content">
+                  <div className="package-header">
+                    <h3>{pkg.name}</h3>
+                    <p className="package-destination">📍 {pkg.destination}</p>
+                    <p className="package-duration">⏱️ {pkg.duration}</p>
+                  </div>
+                  <p className="package-description">{pkg.description}</p>
+                  <div className="package-included">
+                    <h4>What's Included:</h4>
+                    <ul>
+                      {pkg.included.map((item, index) => (
+                        <li key={index}>✓ {item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="package-footer">
+                    <button onClick={() => handleBookNow(pkg)} className="book-now-btn">
+                      Book Now →
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="package-content">
-                <div className="package-header">
-                  <h3>{pkg.name}</h3>
-                  <p className="package-destination">📍 {pkg.destination}</p>
-                  <p className="package-duration">⏱️ {pkg.duration}</p>
-                </div>
-                <p className="package-description">{pkg.description}</p>
-                <div className="package-included">
-                  <h4>What's Included:</h4>
-                  <ul>
-                    {pkg.included.map((item, index) => (
-                      <li key={index}>✓ {item}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="package-footer">
-                  <button onClick={() => handleBookNow(pkg)} className="book-now-btn">
-                    Book Now →
-                  </button>
-                </div>
-              </div>
-            </div>
             ))}
           </div>
         )}

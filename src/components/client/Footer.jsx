@@ -20,8 +20,8 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Contact</h4>
           <p>Email: info@worldtrip.com</p>
-          <p>Phone: +1 (555) 123-4567</p>
-          <p>Address: 123 Travel Street, Tourism City</p>
+          <p>Phone: +91 54321 67890</p>
+          <p>Address: 1501/Gajanand park-1, Aambatalavdi, Katargam, Surat-395004.</p>
         </div>
         {/* <div className="footer-section">
           <h4>Follow Us</h4>
