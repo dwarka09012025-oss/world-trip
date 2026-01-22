@@ -19,7 +19,7 @@ function App() {
     <AppProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/register" replace />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
