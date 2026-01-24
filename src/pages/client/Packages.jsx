@@ -55,15 +55,15 @@ const Packages = () => {
     }
     try {
       await placeOrder(selectedPackage.id, selectedPackage, formData)
-      alert('Booking confirmed successfully! Your order has been placed.')
+      alert('Booking confirmed successfully! Your Booking has been placed.')
       setShowBookingPage(false)
       setSelectedPackage(null)
       // Redirect to My Orders page after successful booking
       navigate('/my-orders')
     } catch (error) {
-      console.error('Order placement error:', error)
-      const errorMessage = error.message || 'Failed to place order. Please try again.'
-      alert(`Error: ${errorMessage}\n\nIf the backend server is not running, the order will be saved locally.`)
+      console.error('Booking placement error:', error)
+      const errorMessage = error.message || 'Failed to place Boking. Please try again.'
+      alert(`Error: ${errorMessage}\n\nIf the backend server is not running, the Booking will be saved locally.`)
     }
   }
 
@@ -214,6 +214,7 @@ const Packages = () => {
                       value={formData.passportNumber}
                       onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })}
                       placeholder="Enter passport number"
+                      maxLength={10}
                     />
                   </div>
                 </div>

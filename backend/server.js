@@ -23,12 +23,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const initDatabase = () => {
   const dataDir = path.dirname(DB_PATH)
   fs.ensureDirSync(dataDir)
-  
+
   const db = new Database(DB_PATH)
-  
+
   // Enable foreign keys
   db.pragma('foreign_keys = ON')
-  
+
   // Create packages table
   db.exec(`
     CREATE TABLE IF NOT EXISTS packages (
@@ -44,7 +44,7 @@ const initDatabase = () => {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
-  
+
   // Create customers table
   db.exec(`
     CREATE TABLE IF NOT EXISTS customers (
@@ -54,7 +54,7 @@ const initDatabase = () => {
       registered_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
-  
+
   // Create orders table
   db.exec(`
     CREATE TABLE IF NOT EXISTS orders (
@@ -79,14 +79,14 @@ const initDatabase = () => {
       FOREIGN KEY (package_id) REFERENCES packages(id)
     )
   `)
-  
+
   // Create indexes for better performance
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_orders_customer_email ON orders(customer_email);
     CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
     CREATE INDEX IF NOT EXISTS idx_customers_email ON customers(email);
   `)
-  
+
   // Check if we need to migrate from old JSON database
   if (fs.pathExistsSync(OLD_DB_PATH)) {
     try {
@@ -103,7 +103,7 @@ const initDatabase = () => {
       insertDefaultPackages(db)
     }
   }
-  
+
   return db
 }
 
@@ -113,12 +113,12 @@ const migrateFromJSON = (db, oldData) => {
     INSERT INTO packages (id, name, destination, duration, price, image, description, included)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `)
-  
+
   const insertCustomer = db.prepare(`
     INSERT OR IGNORE INTO customers (id, name, email, registered_at)
     VALUES (?, ?, ?, ?)
   `)
-  
+
   const insertOrder = db.prepare(`
     INSERT INTO orders (
       id, package_id, package_name, destination, price, customer_name, customer_email,
@@ -126,7 +126,7 @@ const migrateFromJSON = (db, oldData) => {
       city, country, passport_number, total_amount, status, order_date
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
-  
+
   const transaction = db.transaction(() => {
     // Migrate packages
     if (oldData.packages && oldData.packages.length > 0) {
@@ -147,7 +147,7 @@ const migrateFromJSON = (db, oldData) => {
         }
       }
     }
-    
+
     // Migrate customers
     if (oldData.customers && oldData.customers.length > 0) {
       for (const customer of oldData.customers) {
@@ -163,7 +163,7 @@ const migrateFromJSON = (db, oldData) => {
         }
       }
     }
-    
+
     // Migrate orders
     if (oldData.orders && oldData.orders.length > 0) {
       for (const order of oldData.orders) {
@@ -194,7 +194,7 @@ const migrateFromJSON = (db, oldData) => {
       }
     }
   })
-  
+
   transaction()
 }
 
@@ -262,12 +262,12 @@ const insertDefaultPackages = (db) => {
       included: ['5-Star Hotel', 'All Meals', 'Desert Safari', 'Burj Khalifa']
     }
   ]
-  
+
   const insert = db.prepare(`
     INSERT INTO packages (id, name, destination, duration, price, image, description, included)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `)
-  
+
   const transaction = db.transaction(() => {
     for (const pkg of defaultPackages) {
       insert.run(
@@ -282,7 +282,7 @@ const insertDefaultPackages = (db) => {
       )
     }
   })
-  
+
   transaction()
 }
 
@@ -315,15 +315,34 @@ app.get('/api/packages', (req, res) => {
 })
 
 // Get single package
+// app.get('/api/packages/:id', (req, res) => {
+//   try {
+//     const package = db.prepare('SELECT * FROM packages WHERE id = ?').get(parseInt(req.params.id))
+//     if (!package) {
+//       return res.status(404).json({ error: 'Package not found' })
+//     }
+//     res.json({
+//       ...package,
+//       included: parseIncluded(package.included)
+//     })
+//   } catch (error) {
+//     res.status(500).json({ error: error.message })
+//   }
+// })
+
+// Get single package
 app.get('/api/packages/:id', (req, res) => {
   try {
-    const package = db.prepare('SELECT * FROM packages WHERE id = ?').get(parseInt(req.params.id))
-    if (!package) {
+    // 1. Rename 'package' to 'pkg' to avoid reserved word conflict
+    const pkg = db.prepare('SELECT * FROM packages WHERE id = ?').get(parseInt(req.params.id))
+
+    if (!pkg) {
       return res.status(404).json({ error: 'Package not found' })
     }
+
     res.json({
-      ...package,
-      included: parseIncluded(package.included)
+      ...pkg,
+      included: parseIncluded(pkg.included)
     })
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -334,7 +353,7 @@ app.get('/api/packages/:id', (req, res) => {
 app.post('/api/packages', (req, res) => {
   try {
     const { name, destination, duration, price, image, description, included } = req.body
-    
+
     const result = db.prepare(`
       INSERT INTO packages (name, destination, duration, price, image, description, included, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -347,7 +366,7 @@ app.post('/api/packages', (req, res) => {
       description || null,
       JSON.stringify(included || [])
     )
-    
+
     const newPackage = db.prepare('SELECT * FROM packages WHERE id = ?').get(result.lastInsertRowid)
     res.json({
       ...newPackage,
@@ -363,7 +382,7 @@ app.put('/api/packages/:id', (req, res) => {
   try {
     const { name, destination, duration, price, image, description, included } = req.body
     const id = parseInt(req.params.id)
-    
+
     db.prepare(`
       UPDATE packages 
       SET name = ?, destination = ?, duration = ?, price = ?, image = ?, 
@@ -379,12 +398,12 @@ app.put('/api/packages/:id', (req, res) => {
       JSON.stringify(included || []),
       id
     )
-    
+
     const updatedPackage = db.prepare('SELECT * FROM packages WHERE id = ?').get(id)
     if (!updatedPackage) {
       return res.status(404).json({ error: 'Package not found' })
     }
-    
+
     res.json({
       ...updatedPackage,
       included: parseIncluded(updatedPackage.included)
@@ -399,11 +418,11 @@ app.delete('/api/packages/:id', (req, res) => {
   try {
     const id = parseInt(req.params.id)
     const result = db.prepare('DELETE FROM packages WHERE id = ?').run(id)
-    
+
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Package not found' })
     }
-    
+
     res.json({ message: 'Package deleted successfully' })
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -439,7 +458,7 @@ app.post('/api/orders', (req, res) => {
       customerPhone, travelDate, numberOfTravelers, specialRequests, address,
       city, country, passportNumber, totalAmount
     } = req.body
-    
+
     const result = db.prepare(`
       INSERT INTO orders (
         package_id, package_name, destination, price, customer_name, customer_email,
@@ -463,7 +482,7 @@ app.post('/api/orders', (req, res) => {
       passportNumber || null,
       totalAmount || price
     )
-    
+
     const newOrder = db.prepare('SELECT * FROM orders WHERE id = ?').get(result.lastInsertRowid)
     res.json(newOrder)
   } catch (error) {
@@ -476,13 +495,13 @@ app.put('/api/orders/:id/status', (req, res) => {
   try {
     const id = parseInt(req.params.id)
     const { status } = req.body
-    
+
     const result = db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, id)
-    
+
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Order not found' })
     }
-    
+
     const updatedOrder = db.prepare('SELECT * FROM orders WHERE id = ?').get(id)
     res.json(updatedOrder)
   } catch (error) {
@@ -504,12 +523,12 @@ app.get('/api/customers', (req, res) => {
 app.post('/api/customers', (req, res) => {
   try {
     const { name, email } = req.body
-    
+
     const result = db.prepare(`
       INSERT INTO customers (name, email, registered_at)
       VALUES (?, ?, CURRENT_TIMESTAMP)
     `).run(name, email)
-    
+
     const newCustomer = db.prepare('SELECT * FROM customers WHERE id = ?').get(result.lastInsertRowid)
     res.json(newCustomer)
   } catch (error) {

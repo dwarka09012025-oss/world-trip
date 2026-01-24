@@ -7,11 +7,10 @@ const AdminOrders = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus)
-      // Show success message
       console.log(`Order ${orderId} status updated to ${newStatus}`)
     } catch (error) {
-      console.error('Error updating order status:', error)
-      alert(`Failed to update order status: ${error.message || 'Please try again.'}`)
+      console.error('Error updating Booking status:', error)
+      alert(`Failed to update Booking status: ${error.message || 'Please try again.'}`)
     }
   }
 
@@ -33,22 +32,22 @@ const AdminOrders = () => {
   return (
     <div className="admin-orders">
       <div className="admin-page-header">
-        <h1>Manage Orders</h1>
-        <span className="orders-count">Total Orders: {orders.length}</span>
+        <h1>Manage Booking</h1>
+        <span className="orders-count">Total Booking: {orders.length}</span>
       </div>
 
       <div className="orders-table-container">
         {orders.length === 0 ? (
           <div className="no-orders">
             <div className="no-orders-icon">📦</div>
-            <h2>No Orders Yet</h2>
-            <p>Orders placed by customers will appear here.</p>
+            <h2>No Booking Yet</h2>
+            <p>Booking placed by customers will appear here.</p>
           </div>
         ) : (
           <table className="orders-table">
             <thead>
               <tr>
-                <th>Order ID</th>
+                <th>Booking ID</th>
                 <th>Package</th>
                 <th>Customer</th>
                 <th>Travel Details</th>

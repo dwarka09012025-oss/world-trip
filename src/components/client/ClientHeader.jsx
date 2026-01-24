@@ -28,7 +28,7 @@ const ClientHeader = () => {
           </Link>
           {user && (
             <Link to="/my-orders" className={`nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
-              My Orders
+              My Booking
             </Link>
           )}
           <Link to="/about-us" className={`nav-link ${isActive('/about-us') ? 'active' : ''}`}>

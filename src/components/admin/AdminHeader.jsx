@@ -27,7 +27,7 @@ const AdminHeader = () => {
             Packages
           </Link>
           <Link to="/admin/orders" className={`admin-nav-link ${isActive('/admin/orders') ? 'active' : ''}`}>
-            Orders
+            Booking
           </Link>
           <Link to="/admin/customers" className={`admin-nav-link ${isActive('/admin/customers') ? 'active' : ''}`}>
             Customers

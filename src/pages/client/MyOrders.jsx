@@ -78,15 +78,15 @@ const MyOrders = () => {
   return (
     <div className="my-orders">
       <div className="orders-hero">
-        <h1>My Orders</h1>
+        <h1>My Booking</h1>
         <p>Track your bookings and travel plans</p>
       </div>
       <div className="container">
         {myOrders.length === 0 ? (
           <div className="no-orders">
             <div className="no-orders-icon">📦</div>
-            <h2>No Orders Yet</h2>
-            <p>You haven't placed any orders yet. Start exploring our packages!</p>
+            <h2>No Booking Yet</h2>
+            <p>You haven't placed any Booking yet. Start exploring our packages!</p>
           </div>
         ) : (
           <div className="orders-list">
@@ -106,18 +106,18 @@ const MyOrders = () => {
                     </span>
                     {order.isLocal && (
                       <span style={{ fontSize: '0.75rem', color: '#666', fontStyle: 'italic' }}>
-                        (Saved Locally)
+                        {/* (Saved Locally) */}
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="order-details">
                   <div className="order-detail-item">
-                    <span className="detail-label">Order ID:</span>
+                    <span className="detail-label">Booking ID:</span>
                     <span className="detail-value">#{order.id}</span>
                   </div>
                   <div className="order-detail-item">
-                    <span className="detail-label">Order Date:</span>
+                    <span className="detail-label">Booking Date:</span>
                     <span className="detail-value">
                       {order.orderDate ? new Date(order.orderDate).toLocaleDateString() : 'N/A'}
                     </span>
